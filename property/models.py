@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class Flat(models.Model):
@@ -11,7 +12,12 @@ class Flat(models.Model):
     price = models.IntegerField("Цена квартиры", db_index=True)
 
     town = models.CharField("Город, где находится квартира", max_length=50, db_index=True)
-    town_district = models.CharField("Район города, где находится квартира", max_length=50, blank=True, help_text='Чертаново Южное')
+    town_district = models.CharField(
+        "Район города, где находится квартира",
+        max_length=50,
+        blank=True,
+        help_text='Чертаново Южное'
+    )
     address = models.TextField("Адрес квартиры", help_text='ул. Подольских курсантов д.5 кв.4')
     floor = models.CharField("Этаж", max_length=3, help_text='Первый этаж, последний этаж, пятый этаж')
 
@@ -26,3 +32,23 @@ class Flat(models.Model):
 
     def __str__(self):
         return f"{self.town}, {self.address} ({self.price}р.)"
+
+
+class Complaint(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='complaints',
+        verbose_name='Кто жаловался'
+    )
+    flat = models.ForeignKey(
+        Flat,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='complaints',
+        verbose_name='Квартира, на которую пожаловались'
+    )
+    text = models.TextField("Текст жалобы", max_length=500)
