@@ -39,7 +39,6 @@ class Complaint(models.Model):
         User,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True,
         related_name='complaints',
         verbose_name='Кто жаловался'
     )
@@ -47,8 +46,14 @@ class Complaint(models.Model):
         Flat,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True,
         related_name='complaints',
         verbose_name='Квартира, на которую пожаловались'
     )
-    text = models.TextField("Текст жалобы", max_length=500)
+    text = models.TextField(
+        "Текст жалобы",
+        max_length=500,
+        null=True
+    )
+
+    def __str__(self):
+        return f"{self.flat}, {self.user}"
